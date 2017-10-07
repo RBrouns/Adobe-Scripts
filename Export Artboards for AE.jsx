@@ -55,11 +55,17 @@ function saveAeArtboards(){
     saveOptions.artboardRange = rangeExportString;
     saveOptions.saveMultipleArtboards = true;
     saveOptions.pdfCompatible = true;
-    doc.saveAs(file, saveOptions);
-    
+    try{
+        doc.saveAs(file, saveOptions);
+        alert("The following artboards were saved as seperate files: " + rangeExportString);
+    }catch(e){
+        alert("Saving was cancelled manually!");
+    }
+       
     return 1;
 }
 
+//Not yet implemented
 function exportJpgArtboards(dest){
     var exportOptions = new ExportOptionsJPEG();
     var type = ExportType.JPEG
