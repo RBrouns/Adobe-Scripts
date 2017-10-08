@@ -30,6 +30,7 @@ function createListOfAeArtboards(){
             if(layerOfObj.indexOf("Anim") != -1){
                 AeArtboardNums.push(a+1);
                 $.writeln("Content in artboard: " + a +" is on Anim layer");
+                break;
             }
         }
    }
