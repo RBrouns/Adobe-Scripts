@@ -8,6 +8,8 @@ var AeArtboardNums = [];
 createListOfAeArtboards();
 saveAeArtboards();
 
+exportPngArtboards();
+
 function createListOfAeArtboards(){
     //A double method is applied to identify artboards as being input for AE. This makes it more fool-proof
    
@@ -51,14 +53,14 @@ function saveAeArtboards(){
     $.writeln("Target folder:"+ docPath);
 
     //Saving process
-    var file = new File(docPath +"/AE Assets/STP.ai");
+    var file = new File(docPath +"/AE Assets/");
     var saveOptions = new IllustratorSaveOptions();
     saveOptions.artboardRange = rangeExportString;
     saveOptions.saveMultipleArtboards = true;
     saveOptions.pdfCompatible = true;
     try{
         doc.saveAs(file, saveOptions);
-        alert("The following artboards were saved as seperate files: " + rangeExportString);
+        //alert("The following artboards were saved as seperate files: " + rangeExportString);
     }catch(e){
         alert("Saving was cancelled manually!");
     }
@@ -66,11 +68,45 @@ function saveAeArtboards(){
     return 1;
 }
 
-//Not yet implemented
-function exportJpgArtboards(dest){
-    var exportOptions = new ExportOptionsJPEG();
-    var type = ExportType.JPEG
-    var fileSpec = new File(destination);
-    exportOptions.qualitySetting = 80;
+function exportPngArtboards(){
+    var artboardNums = [];
+    
+    var skipArtboard;
+    for(var ab=0;ab<doc.artboards.length;ab++){
+        skipArtboard = false;
+        
+        //Check if an artboard is already exported as an AE artboard
+        for(var i=0;i<AeArtboardNums.length;i++){
+            if(AeArtboardNums[i] == ab){
+                skipArtboard = true;
+                break;
+            }
+        }
+    
+        if(doc.artboards[ab].name.indexOf("OLD") != -1 || doc.artboards[ab].name.indexOf("ignore") != -1){
+            skipArtboard = true;
+        }
+    
+        if(!skipArtboard){
+            artboardNums.push(ab+1);
+            doc.artboards.setActiveArtboardIndex(ab);
+            var abName = doc.artboards[ab].name;
+            saveAPng(abName);
+        }
+     }
+ 
+    $.writeln("PNG export complete, num of artboards: " + artboardNums.length);
+}
+
+
+function saveAPng(abName){
+    var file = new File(docPath +"/JPG/" + abName + ".jpg");
+    
+    var exportOptions = new ExportOptionsPNG24();
+    exportOptions.artBoardClipping = true;
+    exportOptions.antiAliasing = false;
+    exportOptions.horizontalScale = exportOptions.verticalScale = 417;
+
+    doc.exportFile(file, ExportType.PNG24, exportOptions);
 }
     
