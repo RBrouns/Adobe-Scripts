@@ -53,12 +53,15 @@ function process(origLibItem){
     app.executeMenuCommand('copy');
     origDoc.activate();
     app.executeMenuCommand('pasteFront');
-    app.selection.position = origLibItem.position;
+    app.executeMenuCommand ('group');
+    var item = app.selection[0];
+    item.position = origLibItem.position;
+    app.executeMenuCommand ('ungroup');
     
     tempDoc.close();
     tempDoc = null;
     origLibItem.remove();
-    
+
     //Modify the item, which may consist of multiple seperate (ungrouped) items
     for(var i=0;i<app.selection.length;i++){
             changeColor(app.selection[i]);
