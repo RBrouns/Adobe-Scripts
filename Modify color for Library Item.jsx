@@ -1,7 +1,7 @@
 ﻿var origDoc = app.activeDocument;
 
 var libItems = [];
-targetSwatch = doc.swatches.getSelected();
+targetSwatch = origDoc.swatches.getSelected();
 targetSwatchName = targetSwatch.toString();
 $.writeln("---- GO ----");
 $.writeln("Target fill: " + targetSwatch)
