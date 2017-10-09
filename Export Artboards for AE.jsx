@@ -1,14 +1,24 @@
 ﻿var doc = app.activeDocument;
 var docPath = decodeURI(app.activeDocument.path);
+var aeOutputFolder = new Folder(docPath + "/AE Assets");
+var pngOutputFolder = new Folder(docPath + "/PNG");
 
 $.writeln("------ GO ------");
 
 var AeArtboardNums = [];
 
+deleteExistingFiles(aeOutputFolder.getFiles());
+deleteExistingFiles(pngOutputFolder.getFiles());
 createListOfAeArtboards();
 saveAeArtboards();
 
 exportPngArtboards();
+
+function deleteExistingFiles(fileList){
+    for(var i=0;i<fileList.length;i++){
+        fileList[i].remove();
+    }
+}
 
 function createListOfAeArtboards(){
     //A double method is applied to identify artboards as being input for AE. This makes it more fool-proof
@@ -31,7 +41,7 @@ function createListOfAeArtboards(){
             var layerOfObj = app.selection[i].layer.toString();
             if(layerOfObj.indexOf("Anim") != -1){
                 AeArtboardNums.push(a+1);
-                $.writeln("Content in artboard: " + a +" is on Anim layer");
+                $.writeln("Content in artboard: " + (a+1) +" is on Anim layer");
                 break;
             }
         }
@@ -53,7 +63,7 @@ function saveAeArtboards(){
     $.writeln("Target folder:"+ docPath);
 
     //Saving process
-    var file = new File(docPath +"/AE Assets/");
+    var file = new File(docPath +"/AE Assets/STP");
     var saveOptions = new IllustratorSaveOptions();
     saveOptions.artboardRange = rangeExportString;
     saveOptions.saveMultipleArtboards = true;
@@ -77,7 +87,7 @@ function exportPngArtboards(){
         
         //Check if an artboard is already exported as an AE artboard
         for(var i=0;i<AeArtboardNums.length;i++){
-            if(AeArtboardNums[i] == ab){
+            if(AeArtboardNums[i] == (ab+1)){
                 skipArtboard = true;
                 break;
             }
@@ -88,6 +98,7 @@ function exportPngArtboards(){
         }
     
         if(!skipArtboard){
+            $.writeln("PNG exported artboard: " + (ab+1));
             artboardNums.push(ab+1);
             doc.artboards.setActiveArtboardIndex(ab);
             var abName = doc.artboards[ab].name;
@@ -100,11 +111,12 @@ function exportPngArtboards(){
 
 
 function saveAPng(abName){
-    var file = new File(docPath +"/JPG/" + abName + ".jpg");
+    var file = new File(docPath +"/PNG/" + abName + ".jpg");
     
     var exportOptions = new ExportOptionsPNG24();
     exportOptions.artBoardClipping = true;
     exportOptions.antiAliasing = false;
+    exportOptions.transparency = false;
     exportOptions.horizontalScale = exportOptions.verticalScale = 417;
 
     doc.exportFile(file, ExportType.PNG24, exportOptions);
