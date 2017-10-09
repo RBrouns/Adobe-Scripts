@@ -9,6 +9,6 @@ These operations are the same every time. To you this may be, saving/copying a f
 
 So I figured I'd be better off to automate these tasks.
 Every script saves me up to 10 or 20 sec per time, adding up to 5 minutes per day, per script.
-A single investment of merely an hour, writing a script to perform the task for you, will definitly pay off in the long run!
+A single investment of merely an hour, writing a script to perform the task for you, will definitely pay off in the long run!
 
 So there we go, my series of Illustrator and After Effect automation scripts for Adobe ES.
