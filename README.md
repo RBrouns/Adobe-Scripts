@@ -7,8 +7,7 @@ These operations are the same every time. To you this may be, saving/copying a f
 - Automatically update a complete iconset to small style changes (color, rounding, etc)
 - Preparing artboards for AE rendering.
 
-So I figured I'd be better off to automate these tasks.
-Every script saves me up to 10 or 20 sec per time, adding up to 5 minutes per day, per script.
-A single investment of merely an hour, writing a script to perform the task for you, will definitely pay off in the long run!
+So I figured I'd be better off to automate these tasks. The scripts I have reduce 40 minutes of work into only 5 minutes, and even 5 minutes I can spend on something else.
 
-So there we go, my series of Illustrator and After Effect automation scripts for Adobe ES.
+So there we go, my series of Illustrator and After Effect automation scripts for Adobe ES. Hope they can help you too!
+Requests are welcome!
