@@ -7,12 +7,22 @@ $.writeln("------ GO ------");
 
 var AeArtboardNums = [];
 
+checkIfFoldersExist();
 deleteExistingFiles(aeOutputFolder.getFiles());
 deleteExistingFiles(pngOutputFolder.getFiles());
 createListOfAeArtboards();
 saveAeArtboards();
-
 exportPngArtboards();
+
+function checkIfFoldersExist(){
+    if(!aeOutputFolder.exists){
+        aeOutputFolder.create();
+    }
+    
+    if(!pngOutputFolder.exists){
+        pngOutputFolder.create();
+    }
+}
 
 function deleteExistingFiles(fileList){
     for(var i=0;i<fileList.length;i++){
