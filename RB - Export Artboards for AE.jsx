@@ -3,13 +3,13 @@ var docPath = decodeURI(app.activeDocument.path);
 var aeOutputFolder = new Folder(docPath + "/AE Assets");
 var pngOutputFolder = new Folder(docPath + "/PNG");
 
-$.writeln("------ GO ------");
+$.writeln("------ Go: AI Script ------");
 
 var AeArtboardNums = [];
 
 checkIfFoldersExist();
-deleteExistingFiles(aeOutputFolder.getFiles());
-deleteExistingFiles(pngOutputFolder.getFiles());
+//deleteExistingFiles(aeOutputFolder.getFiles());
+//deleteExistingFiles(pngOutputFolder.getFiles());
 createListOfAeArtboards();
 saveAeArtboards();
 exportPngArtboards();
@@ -33,10 +33,10 @@ function deleteExistingFiles(fileList){
 function createListOfAeArtboards(){
     //A double method is applied to identify artboards as being input for AE. This makes it more fool-proof
    
-    //Method 1: Check if "AE" is in the title of an artboard
+    //Method 1: Check if "AE" or "Elem" is in the title of an artboard
     for(var i=0;i<doc.artboards.length;i++){
         var ab = doc.artboards[i];
-        if(ab.name.toString().indexOf("AE") != -1){
+        if(ab.name.toString().indexOf("AE") != -1 || ab.name.toString().indexOf("Elem ") != -1){
             AeArtboardNums.push(i+1);
         }
     }
@@ -44,14 +44,19 @@ function createListOfAeArtboards(){
     //Method 2: Check if the artboard has content on the 'Animated' layer
     for(var a=0;a<doc.artboards.length;a++){
         doc.artboards.setActiveArtboardIndex(a);
-        doc.selectObjectsOnActiveArtboard( );
+        doc.selectObjectsOnActiveArtboard();
     
         //Check if any of the artboard's content (now selected) is on a layer with name "anim"
-        for(var i=0;i < app.selection.length ; i++){  
-            var layerOfObj = app.selection[i].layer.toString();
+        for(var i=0;i < app.selection.length ; i++){
+            try{
+                var layerOfObj = app.selection[i].layer.toString();
+            }catch(err){
+                $.writeln(err.toString() + "ERROR. Item on artboard: [" + doc.artboards[a].name + "] on index: "+ i + "/" + app.selection.length + " of type: " + app.selection[i]);
+                var optionalbreakpoint = 0;
+            }finally{
+            }
             if(layerOfObj.indexOf("Anim") != -1){
                 AeArtboardNums.push(a+1);
-                $.writeln("Content in artboard: " + (a+1) +" is on Anim layer");
                 break;
             }
         }
