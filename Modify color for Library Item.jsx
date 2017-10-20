@@ -1,6 +1,7 @@
 ﻿var origDoc = app.activeDocument;
 
 var libItems = [];
+var tempDocs = [];
 var targetSwatch;
 var targetSwatchName;
 
@@ -38,15 +39,21 @@ function run(){
         }else if(origNumbOfItems == 0){
             alert("Please select at least one library item on your artboard.");
         }
+    
+    //Close all temp docs
+    while(tempDocs.length > 0){
+        tempDocs.pop(i).closeNoUI();
+    }
 }
 
-//Done
+
 
 function process(origLibItem){
     
     //Open a document for the selected libraryitem;
     app.open(origLibItem.file);
     var tempDoc = app.activeDocument;
+    tempDocs.push(tempDoc);
     tempDoc.selectObjectsOnActiveArtboard( );
         
     //Copy, return to original doc, and paste
@@ -58,8 +65,6 @@ function process(origLibItem){
     item.position = origLibItem.position;
     app.executeMenuCommand ('ungroup');
     
-    tempDoc.close();
-    tempDoc = null;
     origLibItem.remove();
 
     //Modify the item, which may consist of multiple seperate (ungrouped) items
