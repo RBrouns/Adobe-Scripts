@@ -95,7 +95,7 @@ function changeColor(pageItem){
     } 
 
     if(!isSuccess){
-        alert(" Your library item is an unsupported type:" + editableLibItem.toString() + ". This script only supports libraryitems that are Grouped artwork or Compound Paths.");
+        alert(" Your library item is an unsupported type:" + pageItem.toString() + ". This script only supports libraryitems that are Grouped artwork or Compound Paths.");
     }
 
     return isSuccess;
