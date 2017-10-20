@@ -1,21 +1,17 @@
 ﻿var origDoc = app.activeDocument;
 
 var libItems = [];
-var tempDocs = [];
-var targetSwatch;
-var targetSwatchName;
+var tempDoc;
+var targetColor = origDoc.defaultFillColor;
 
 run();
 
 function run(){
-    
-        targetSwatch = origDoc.swatches.getSelected();
-        targetSwatchName = targetSwatch.toString();
         $.writeln("---- GO ----");
-        $.writeln("Target fill: " + targetSwatch);
+        $.writeln("Target color: " + targetColor);
 
-        if(targetSwatchName == undefined || targetSwatchName == ""){
-            alert("Please select a swatch first.");
+        if(targetColor == undefined || targetColor == ""){
+            alert("Please select a color first.");
             return 0;
         }
 
@@ -35,14 +31,14 @@ function run(){
         }
 
         if(origNumbOfItems > 1){
-            alert("Completed. " + origNumbOfItems +" library items on your artboard were modified to your selected swatch");
+            $.writeln("---- Completed ---- ");
         }else if(origNumbOfItems == 0){
             alert("Please select at least one library item on your artboard.");
         }
     
     //Close all temp docs
-    while(tempDocs.length > 0){
-        tempDocs.pop(i).closeNoUI();
+    if(tempDoc != null){
+        tempDoc.closeNoUI();
     }
 }
 
@@ -52,7 +48,7 @@ function process(origLibItem){
     
     //Open a document for the selected libraryitem;
     app.open(origLibItem.file);
-    var tempDoc = app.activeDocument;
+    tempDoc = app.activeDocument;
     tempDocs.push(tempDoc);
     tempDoc.selectObjectsOnActiveArtboard( );
         
@@ -110,9 +106,8 @@ function changeColor(pageItem){
 function modifyPathColors(pathItems){      
         for(var i=0;i<pathItems.length;i++){
             var path = pathItems[i];
-            var targetSwatch = getSwatchByName(targetSwatchName);
             if(path.fillColor != undefined){
-                path.fillColor = targetSwatch.color;
+                path.fillColor = targetColor;
             }
         }
     
@@ -121,21 +116,8 @@ function modifyPathColors(pathItems){
 
 //Needs a single path (PathItem)
 function modifySinglePathItemColors(path){
-    var targetSwatch = getSwatchByName(targetSwatchName);
         if(path.fillColor != undefined){
-            path.fillColor = targetSwatch.color;
+            path.fillColor = targetColor;
         }
     return 1;
-}
-
-function getSwatchByName(name){
-    //First attempt find by name
-    for(var i=0;i<origDoc.swatches.length;i++){
-        if(origDoc.swatches[i].toString() == targetSwatchName){
-            return origDoc.swatches[i];
-        }
-    }
-
-    alert("Warning, swatch was not found: " + name);
-    return 0;
 }
