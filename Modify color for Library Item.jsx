@@ -49,7 +49,6 @@ function process(origLibItem){
     //Open a document for the selected libraryitem;
     app.open(origLibItem.file);
     tempDoc = app.activeDocument;
-    tempDocs.push(tempDoc);
     tempDoc.selectObjectsOnActiveArtboard( );
         
     //Copy, return to original doc, and paste
