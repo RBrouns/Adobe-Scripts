@@ -1,7 +1,6 @@
-﻿var doc = app.activeDocument;
-var docPath = decodeURI(app.activeDocument.path);
-var aeOutputFolder = new Folder(docPath + "/AE Assets");
-var pngOutputFolder = new Folder(docPath + "/PNG");
+﻿var doc = app.activeDocument; 
+var rootPath = decodeURI(app.activeDocument.path);
+var aeOutputFolder = rootPath + "/AE Assets";
 
 $.writeln("------ Go: AI Script ------");
 
@@ -15,13 +14,10 @@ saveAeArtboards();
 exportPngArtboards();
 
 function checkIfFoldersExist(){
-    if(!aeOutputFolder.exists){
-        aeOutputFolder.create();
-    }
-    
-    if(!pngOutputFolder.exists){
-        pngOutputFolder.create();
-    }
+    var aeFolder = new Folder(aeFolder);
+    if(!aeFolder.exists){
+        aeFolder.create();
+    } 
 }
 
 function deleteExistingFiles(fileList){
@@ -35,8 +31,8 @@ function createListOfAeArtboards(){
    
     //Method 1: Check if "AE" or "Elem" is in the title of an artboard
     for(var i=0;i<doc.artboards.length;i++){
-        var ab = doc.artboards[i];
-        if(ab.name.toString().indexOf("AE") != -1 || ab.name.toString().indexOf("Elem ") != -1){
+        var abName = doc.artboards[i].name;
+        if(abName.indexOf("AE") != -1 || abName.indexOf("Elem ") != -1){
             AeArtboardNums.push(i+1);
         }
     }
@@ -66,6 +62,7 @@ function createListOfAeArtboards(){
 function saveAeArtboards(){
     //Translate the number range to a string like "1,3,4,5"
     var rangeExportString = new String();
+    
     for(var i=0;i < AeArtboardNums.length;i++){
         //Add comma to seperate artboards, but don't add comma for first    
         if(rangeExportString.length != 0){
@@ -75,10 +72,10 @@ function saveAeArtboards(){
     }
 
     $.writeln("Export Range for AE:" + rangeExportString);
-    $.writeln("Target folder:"+ docPath);
+    $.writeln("Exporting to: " + aeOutputFolder);
 
     //Saving process
-    var file = new File(docPath +"/AE Assets/STP");
+    var file = new File(aeOutputFolder + "/STP");
     var saveOptions = new IllustratorSaveOptions();
     saveOptions.artboardRange = rangeExportString;
     saveOptions.saveMultipleArtboards = true;
@@ -94,46 +91,76 @@ function saveAeArtboards(){
 }
 
 function exportPngArtboards(){
-    var artboardNums = [];
+    var countExported = 0;
     
-    var skipArtboard;
     for(var ab=0;ab<doc.artboards.length;ab++){
-        skipArtboard = false;
+        var abName = doc.artboards[ab].name;
+        var skipArtboard = false;
         
         //Check if an artboard is already exported as an AE artboard
         for(var i=0;i<AeArtboardNums.length;i++){
             if(AeArtboardNums[i] == (ab+1)){
                 skipArtboard = true;
-                break;
             }
         }
     
-        if(doc.artboards[ab].name.indexOf("OLD") != -1 || doc.artboards[ab].name.indexOf("ignore") != -1){
+        if(abName.toLowerCase().indexOf("old") != -1 || abName.toLowerCase().indexOf("ignore") != -1){
             skipArtboard = true;
         }
-    
+        
         if(!skipArtboard){
             $.writeln("PNG exported artboard: " + (ab+1));
-            artboardNums.push(ab+1);
+            countExported++;
             doc.artboards.setActiveArtboardIndex(ab);
-            var abName = doc.artboards[ab].name;
             saveAPng(abName);
         }
      }
- 
-    $.writeln("PNG export complete, num of artboards: " + artboardNums.length);
+     
+        $.writeln("PNG export complete, num of artboards: " + countExported);
 }
 
 
 function saveAPng(abName){
-    var file = new File(docPath +"/PNG/" + abName + ".jpg");
+    var folderToExportTo = checkFolderToMake(abName);
     
+    var file = new File(folderToExportTo.toString() + "/" + abName);
+
     var exportOptions = new ExportOptionsPNG24();
-    exportOptions.artBoardClipping = true;
+    exportOptions.artBoardClipping = true; 
     exportOptions.antiAliasing = false;
     exportOptions.transparency = false;
     exportOptions.horizontalScale = exportOptions.verticalScale = 417;
 
     doc.exportFile(file, ExportType.PNG24, exportOptions);
+}
+
+function checkFolderToMake(abName){
+    
+    //Get first characters of artboard name before space
+    var abPrefix = abName.substr(0, abName.indexOf(" "));
+    
+    //Check if other artboards have the same prefix and count + 1
+    var countSimilarPrefixes = 0;
+    for(var i=0;i<doc.artboards.length;i++){
+        var otherAbName = doc.artboards[i].name;
+        var otherAbPrefix = otherAbName.substr(0, otherAbName.indexOf(" "));
+        
+        if(abPrefix == otherAbPrefix && abName != otherAbName){
+            countSimilarPrefixes++;
+        }
+    }
+
+    //If count is 3 or higher, create a dedicated folder
+    if(countSimilarPrefixes >= 3){    
+        var outputFolder = new Folder(rootPath + "/PNG/" + abPrefix);
+    }else{
+        var outputFolder = new Folder(rootPath + "/PNG/");
+    }
+          
+     if(!outputFolder.exists){
+         outputFolder.create();
+     }
+ 
+     return outputFolder;
 }
     

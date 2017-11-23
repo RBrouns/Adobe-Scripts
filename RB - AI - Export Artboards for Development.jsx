@@ -15,6 +15,8 @@ function identifyFreqPrefixes(){
     var matched;
     
     for(var i=0;i<doc.artboards.length;i++){
+        
+        //1: Check if artboard prefix is already known
         matched = false;
         var ab = doc.artboards[i];
         for(var j=0;j<artboardFirstChars.length;j++){
@@ -24,6 +26,7 @@ function identifyFreqPrefixes(){
              }
          }
      
+        //2: Add the artboard prefix to array
         if(!matched){
           artboardFirstChars.push(ab.name.charAt(0));
           artboardOccurences.push(1);
@@ -51,8 +54,6 @@ function createFolders(){
 // ------------------------------
 
 function exportPngArtboards(){
-    var artboardNums = [];
-
     for(var ab=0;ab<doc.artboards.length;ab++){
         $.writeln("Saving artboard:" + ab);
         doc.artboards.setActiveArtboardIndex(ab);
@@ -63,13 +64,12 @@ function exportPngArtboards(){
 
 
 function saveAPng(abName){
-    var file;
     var checkFolder = new Folder(exportRootPath + "/" + abName.charAt(0));
     
     if(checkFolder.exists){
-        file = new File(exportRootPath + "/" + abName.charAt(0) +"/" + abName + ".jpg");
+        var file = new File(exportRootPath + "/" + abName.charAt(0) +"/" + abName + ".jpg");
     }else{
-        file = new File(exportRootPath +"/" + abName + ".jpg");
+        var file = new File(exportRootPath +"/" + abName + ".jpg");
     }
             
     var exportOptions = new ExportOptionsPNG24();

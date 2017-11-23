@@ -33,15 +33,21 @@ collectFiles();
         $.writeln("Error: Original file is neither STP or PTP Prototype");
         return 0;
     }
-    $.writeln("Project is: " + projectContext);
-    rootfolder = "T:\\Product Development\\Projects\\Go-2\\L2."+projectContext+"\\GUI Prototyping";
+    rootFolder = "~/Documents/Design Private/Go-2/" + projectContext + "/GUI Prototyping";
+    $.writeln("Root Folder path: " + rootFolder.toString());
+
     return 1;
 }
 
 function clearOutputFolders(){
+    
+        if(!rootFolder.exists){
+            $.writeln("Warning! Rootfolder doesn't exist");
+        }
+
         //Create references to folders of interest
-        var folderToRemove= new Folder(rootFolder+"\\1 - Media Encoder Input");
-        var foldersToClear = [new Folder(rootFolder+"\\2 - Photoshop Input"), new Folder(rootFolder+"\\3 - GIFs")];
+        var folderToRemove= new Folder(rootFolder+"/1 - Media Encoder Input");
+        var foldersToClear = [new Folder(rootFolder+"/2 - Photoshop Input"), new Folder(rootFolder+"/3 - GIFs")];
 
          //First, save original project file (just in case of changes) 
         app.project.save();
